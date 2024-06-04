@@ -31,13 +31,101 @@
           <div class="card shadow">
             <div class="card-body">
               <h5 class="card-title">Your Current Location</h5>
-              <i id="location" class="bi bi-geo-alt-fill"> ..... </i>
+              <div class="d-flex">
+                <i class="bi bi-geo-alt-fill"></i>
+                <p id="fullAddress">......</p>
+              </div>
+              <h5>Details</h5>
+              <div>
+                <p id="territory">Territory:</p>
+                <!-- <p id="road">Road:</p> -->
+                <p id="city">City</p>
+                <p id="district">District:</p>
+                <p id="state">State:</p>
+                <p id="country">Country:</p>
+                <p id="postcode">Postcode:</p>
+              </div>
             </div>
           </div>
         </div>
         <div class="col-3"></div>
       </div>
     </section>
-    <script></script>
+    <script>
+      function extracLocation() {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          let latitude = position.coords.latitude;
+          let longitude = position.coords.longitude;
+          const geoApi =
+            "https://us1.locationiq.com/v1/reverse?key=pk.2030293d816b524a806e3db5a4cb198a&lat=" +
+            latitude +
+            "&lon=" +
+            longitude +
+            "&format=json";
+          fetch(geoApi)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("GeoLocation Api network error");
+              }
+              return response.json();
+            })
+            .then((result) => {
+              let address = result.display_name;
+              SetFullAddress(address);
+              let location = result.address;
+              console.log(result);
+              let territory = location.borough;
+              setTerritory(territory);
+              //   let road = location.road;
+              //   setRoad(road);
+              let city = location.city;
+              setCity(city);
+              let country = location.country;
+              setCountry(country);
+              let postcode = location.postcode;
+              setPostcode(postcode);
+              let state = location.state;
+              setState(state);
+              let district = location.state_district;
+              setDistrict(district);
+            })
+            .catch((error) => {
+              console.error("Error fetching GeoLocation API:", error);
+            });
+        });
+      }
+      function SetFullAddress(newAddress) {
+        let addressElement = document.getElementById("fullAddress");
+        addressElement.innerHTML = newAddress;
+      }
+      function setTerritory(newterritory) {
+        let Element = document.getElementById("territory");
+        Element.innerHTML = `Territory: ${newterritory}`;
+      }
+      //   function setRoad(newroad) {
+      //     let Element = document.getElementById("road");
+      //     Element.innerHTML = `Road: ${newroad}`;
+      //   }
+      function setCity(newcity) {
+        let Element = document.getElementById("city");
+        Element.innerHTML = `City: ${newcity}`;
+      }
+      function setCountry(newcountry) {
+        let Element = document.getElementById("country");
+        Element.innerHTML = `Country: ${newcountry}`;
+      }
+      function setPostcode(newpostcode) {
+        let Element = document.getElementById("postcode");
+        Element.innerHTML = `Postcode: ${newpostcode}`;
+      }
+      function setState(newstate) {
+        let Element = document.getElementById("state");
+        Element.innerHTML = `State: ${newstate}`;
+      }
+      function setDistrict(newdistrict) {
+        let Element = document.getElementById("district");
+        Element.innerHTML = `District: ${newdistrict}`;
+      }
+    </script>
   </body>
 </html>
